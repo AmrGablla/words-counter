@@ -55,7 +55,7 @@ function clearData() {
   <input ref="fileUpload" type="file" accept=".txt" @change="readFile" />
 
   <h2>File Content</h2>
-  <textarea readonly style="height: 258px; width: 972px">{{
+  <textarea readonly style="height: 258px; width: 100%">{{
     fileContent
   }}</textarea>
 
