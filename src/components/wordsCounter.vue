@@ -1,10 +1,17 @@
 <template>
   <div>
     <label>Choose a file: </label>
-    <input ref="fileUpload" type="file" accept=".txt" @change="handleFileChange" />
+    <input
+      ref="fileUpload"
+      type="file"
+      accept=".txt"
+      @change="handleFileChange"
+    />
 
     <h2>File Content</h2>
-    <textarea readonly style="height: 258px; width: 100%">{{ fileContent }}</textarea>
+    <textarea readonly style="height: 258px; width: 100%">{{
+      fileContent
+    }}</textarea>
 
     <h2>Word Count</h2>
     <div v-if="wordCount">
@@ -43,37 +50,49 @@ function readFileContent(file) {
 }
 
 function countWords(content) {
-  const words = content.trim().split(/\s+/);
-  return words.reduce((countMap, word) => {
-    if (word.length > 0) {
-      const lowerCaseWord = word.toLowerCase();
-      countMap[lowerCaseWord] = (countMap[lowerCaseWord] || 0) + 1;
-    }
-    return countMap;
-  }, {});
+  try {
+    const words = content.trim().split(/\s+/);
+    return words.reduce((countMap, word) => {
+      if (word.length > 0) {
+        const lowerCaseWord = word.toLowerCase();
+        countMap[lowerCaseWord] = (countMap[lowerCaseWord] || 0) + 1;
+      }
+      return countMap;
+    }, {});
+  } catch (error) {
+    log(loggingLevels.error, error);
+  }
 }
 
 function handleFileChange(event) {
-  const file = event.target.files[0];
-  log(loggingLevels.log, "new file :", file);
+  try {
+    const file = event.target.files[0];
+    log(loggingLevels.log, "new file :", file);
 
-  readFileContent(file)
-    .then((content) => {
-      fileContent.value = content;
-      showMessage("New File Uploaded");
-      wordCount.value = countWords(content);
-    })
-    .catch((error) => {
-      log(loggingLevels.error, error);
-      showError("Failed to read file");
-    });
+    readFileContent(file)
+      .then((content) => {
+        fileContent.value = content;
+        showMessage("New File Uploaded");
+        wordCount.value = countWords(content);
+      })
+      .catch((error) => {
+        log(loggingLevels.error, error);
+        showError("Failed to read file");
+      });
 
-  fileUpload.value.value = "";
+    fileUpload.value.value = "";
+  } catch (error) {
+    log(loggingLevels.error, error);
+  }
 }
 
 function clearData() {
-  fileUpload.value.value = "";
-  fileContent.value = "";
-  wordCount.value = [];
+  try {
+    fileUpload.value.value = "";
+    fileContent.value = "";
+    wordCount.value = [];
+  } catch (error) {
+    log(loggingLevels.error, error);
+  }
 }
 </script>
